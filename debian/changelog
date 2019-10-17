@@ -1,0 +1,25 @@
+zrepl (0.2.0) unstable; urgency=medium
+
+  * Pre- and Post-Snapshot Hooks with built-in support for MySQL and
+    Postgres checkpointing as well as custom scripts (thanks, @overhacked!)
+  * Use `zfs destroy pool/fs@snap1,snap2,...` CLI feature if available
+  * Linux ARM64 Docker build support & binary builds
+  * `zrepl status` now displays snapshotting reports
+  * zrepl status --job <JOBNAME> filter flag
+  
+  See https://zrepl.github.io/changelog.html for details.
+
+  NOTE: this release is based on the build artifacts of commit
+    dc39c819a3855360dacd3d1f315a92aa9e1dabca
+  git describe
+    v0.2.0-11-gdc39c81
+  because the debian/rules expects zrepl-noarch.tar to contain the systemd
+  unit file among other things.
+
+  https://minio.cschwarz.com/minio/zrepl-ci-artifacts/
+    dc39c819a3855360dacd3d1f315a92aa9e1dabca/build-1.13/release/
+
+  contains a signed sha512sum.txt made with Christian's
+  usual release signing key
+
+ -- Christian Schwarz <me@cschwarz.com>  Tue, 18 Oct 2019 17:38:43 +0000

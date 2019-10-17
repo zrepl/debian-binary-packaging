@@ -1,0 +1,55 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+NOARCH := release/zrepl-noarch
+
+override_dh_strip:
+override_dh_auto_build:
+
+	# verify gpg signature
+	# create an empty home and import only the release signing key
+	mkdir gpg-verifyhomedir && chmod 0700 gpg-verifyhomedir \
+		&& gpg --homedir=gpg-verifyhomedir --import release_signing_key.pub.asc \
+		&& gpg --homedir=gpg-verifyhomedir  --with-colons --status-fd 1 \
+			--verify release/sha512sum.txt.asc | \
+			grep '^\[GNUPG:\] VALIDSIG E0BF51A4092A6481A35CC6FB328A6627FA98061D'
+		
+	# check sha512sums
+	cd release && sha512sum --check sha512sum.txt
+
+	# extract architecture-independent files
+	mkdir "$(NOARCH)"
+	tar -xf release/zrepl-noarch.tar -C $(NOARCH) --strip-components=1
+
+override_dh_auto_clean:
+	# clean up the mess we made in build
+	rm -rf "$(NOARCH)"
+	rm -rf gpg-verifyhomedir
+	rm -rf debian/binaryrenamedir
+	
+override_dh_auto_install:
+	# install the zrepl.service for
+	# dh_install_systemd and dh_systemd_{start,enable}
+	install $(NOARCH)/dist/systemd/zrepl.service debian/zrepl.service
+	sed -i 's#ExecStart=/usr/local/bin/zrepl #ExecStart=/usr/bin/zrepl #' debian/zrepl.service
+
+	mkdir debian/binaryrenamedir
+	cp --preserve=all release/zrepl-linux-$(DEB_HOST_ARCH) debian/binaryrenamedir/zrepl
+	dh_install debian/binaryrenamedir/zrepl usr/bin
+
+	dh_install $(NOARCH)/bash_completion etc/bash_completion.d/zrepl
+
+	# install docs
+	dh_install $(NOARCH)/docs/html usr/share/doc/zrepl/docs/
+
+	# install examples
+	dh_install $(NOARCH)/config/* usr/share/doc/zrepl/examples
+
+	# save git revision of this packaging repo
+	echo $$(git rev-parse HEAD) > debian/packaging-repo-git-revision
+	dh_install debian/packaging-repo-git-revision usr/share/doc/zrepl
+
+override_dh_auto_test:
+	# don't run tests at this point
