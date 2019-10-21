@@ -1,3 +1,9 @@
+zrepl (0.2.0-1) unstable; urgency=medium
+
+  * default config in /etc/zrepl/zrepl.yml
+
+ -- Christian Schwarz <me@cschwarz.com>  Mon, 21 Oct 2019 10:24:10 +0000
+
 zrepl (0.2.0) unstable; urgency=medium
 
   * Pre- and Post-Snapshot Hooks with built-in support for MySQL and

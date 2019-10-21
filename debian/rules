@@ -27,7 +27,7 @@ override_dh_auto_clean:
 	# clean up the mess we made in build
 	rm -rf "$(NOARCH)"
 	rm -rf gpg-verifyhomedir
-	rm -rf debian/binaryrenamedir
+	rm -rf debian/renamedir
 	
 override_dh_auto_install:
 	# install the zrepl.service for
@@ -35,10 +35,13 @@ override_dh_auto_install:
 	install $(NOARCH)/dist/systemd/zrepl.service debian/zrepl.service
 	sed -i 's#ExecStart=/usr/local/bin/zrepl #ExecStart=/usr/bin/zrepl #' debian/zrepl.service
 
-	mkdir debian/binaryrenamedir
-	cp --preserve=all release/zrepl-linux-$(DEB_HOST_ARCH) debian/binaryrenamedir/zrepl
-	dh_install debian/binaryrenamedir/zrepl usr/bin
+	mkdir debian/renamedir
 
+	# install binary
+	cp --preserve=all release/zrepl-linux-$(DEB_HOST_ARCH) debian/renamedir/zrepl
+	dh_install debian/renamedir/zrepl usr/bin
+
+	# install bash completion
 	dh_install $(NOARCH)/bash_completion etc/bash_completion.d/zrepl
 
 	# install docs
@@ -46,6 +49,12 @@ override_dh_auto_install:
 
 	# install examples
 	dh_install $(NOARCH)/config/* usr/share/doc/zrepl/examples
+
+	# install default config
+	mkdir -p debian/tmp/etc/zrepl
+	chmod 0700 debian/tmp/etc/zrepl
+	cp debian/defaultconfig.zrepl.yml debian/renamedir/zrepl.yml
+	dh_install debian/renamedir/zrepl.yml etc/zrepl
 
 	# save git revision of this packaging repo
 	echo $$(git rev-parse HEAD) > debian/packaging-repo-git-revision
