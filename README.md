@@ -33,7 +33,7 @@ The aptly config, database and GPG homedir for package signing are all in `aptly
 
 ```bash
 # add new placeholder entry to debian/changelog
-sudo docker run --rm -it -v $PWD:/src zrepl_debian_pkg dch --newversion 0.2.0-1 foo
+sudo docker run --rm -it -v $PWD:/src -w /src zrepl_debian_pkg dch --newversion 0.2.0-1 foo
 # now fix placeholders in changelog
 # commit
 # rebuild

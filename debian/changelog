@@ -1,3 +1,14 @@
+zrepl (0.2.1) unstable; urgency=medium
+
+  * 0.2.1 release
+  * |feature| Illumos (and Solaris) compatibility and binary builds (thanks, `MNX.io <https://mnx.io>`_ )
+  * |feature| 32bit binaries for Linux and FreeBSD (untested, though)
+  * |bugfix| better error messages in ``ssh+stdinserver`` transport
+  * |bugfix| systemd + ``ssh+stdinserver``: automatically create ``/var/run/zrepl/stdinserver``
+  * |bugfix| crash if Prometheus listening socket cannot be opened
+
+ -- Christian Schwarz <me@cschwarz.com>  Wed, 20 Nov 2019 19:20:09 +0000
+
 zrepl (0.2.0-1) unstable; urgency=medium
 
   * default config in /etc/zrepl/zrepl.yml
