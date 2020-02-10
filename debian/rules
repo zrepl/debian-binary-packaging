@@ -4,6 +4,13 @@
 	dh $@
 
 NOARCH := release/zrepl-noarch
+ifeq ($(DEB_HOST_ARCH), armhf)
+	ZREPL_ARCH := armv7
+else ifeq ($(DEB_HOST_ARCH), i386)
+	ZREPL_ARCH := 386
+else
+	ZREPL_ARCH := $(DEB_HOST_ARCH)
+endif
 
 override_dh_strip:
 override_dh_auto_build:
@@ -39,7 +46,7 @@ override_dh_auto_install:
 	mkdir debian/renamedir
 
 	# install binary
-	cp --preserve=all release/zrepl-linux-$(DEB_HOST_ARCH) debian/renamedir/zrepl
+	cp --preserve=all release/zrepl-linux-$(ZREPL_ARCH) debian/renamedir/zrepl
 	dh_install debian/renamedir/zrepl usr/bin
 
 	# install bash completion

@@ -19,6 +19,8 @@ Make sure Docker is installed and running on your system.
 # Download GitHub released files into ./release
 ./ondebian_make_debs.bash amd64
 ./ondebian_make_debs.bash arm64
+./ondebian_make_debs.bash armhf
+./ondebian_make_debs.bash i386
 ```
 
 # Publishing in the APT repo
