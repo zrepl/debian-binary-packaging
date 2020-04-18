@@ -1,0 +1,23 @@
+name: CI
+on: repository_dispatch
+
+jobs:
+  build:
+    name: build debian package from released binaries
+    runs-on: linux
+    steps:
+
+    - uses: actions/checkout@v1
+
+    - run: 'echo "payload: ${{ toJson(github.event.client_payload) }}"'
+
+    - name: Download the release
+      run: bash -x ./download_ci_release.bash ${{github.event.client_payload.zrepl_main_repo_commit }} ${{github.event.client_payload.go_version }}
+      
+    - name: Build the package
+      run: bash -x ./docker_make_debs.bash
+
+    - uses: actions/upload-artifact@v2-preview
+      with:
+        name: packages
+        path: debs/**
