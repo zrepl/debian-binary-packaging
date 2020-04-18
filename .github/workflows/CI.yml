@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  repository_dispatch:
+  push:
+
+env:
+  ZREPL_DEBIAN_BUILD_NOVERIFY_GPG: "1"
+
+jobs:
+  build:
+    name: build debian package from released binaries
+    runs-on: ubuntu-latest
+    steps:
+    - run: 'echo ${{ github.event_name }} event triggered this step.'
+    
+    - uses: actions/checkout@v1
+
+    # default variables from committed file
+    - name: Dotenv Action
+      id: dotenv
+      uses: falti/dotenv-action@v0.2.3
+      with:
+        path: ./zrepl_release.env
+    - run: echo '::set-env name=ZREPL_MAIN_REPO_COMMIT::${{steps.dotenv.outputs.ZREPL_MAIN_REPO_COMMIT}}'
+    - run: echo '::set-env name=ZREPL_GO_VERSION::${{steps.dotenv.outputs.ZREPL_GO_VERSION}}'
+
+    # repository_dispatch provides variables in payload
+    - run: 'echo "payload: ${{ toJson(github.event.client_payload) }}"'
+    - run: echo '::set-env name=ZREPL_MAIN_REPO_COMMIT::${{github.event.client_payload.zrepl_main_repo_commit }}'
+      if: github.event_name == 'repository_dispatch'
+    - run: echo '::set-env name=ZREPL_GO_VERSION::${{github.event.client_payload.go_version }}'
+      if: github.event_name == 'repository_dispatch'
+
+    - name: Download the release
+      run: bash -x ./download_ci_release.bash "$ZREPL_MAIN_REPO_COMMIT" "$ZREPL_GO_VERSION"
+      
+    - name: Build the package
+      run: bash -x ./docker_make_debs.bash
+
+    - uses: actions/upload-artifact@v2-preview
+      with:
+        name: packages
+        path: debs/**
