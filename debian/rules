@@ -51,6 +51,7 @@ override_dh_auto_install:
 
 	# install bash completion
 	dh_install $(NOARCH)/bash_completion etc/bash_completion.d/zrepl
+	dh_install $(NOARCH)/_zrepl.zsh_completion usr/share/zsh/vendor-completions
 
 	# install docs
 	dh_install $(NOARCH)/docs/html usr/share/doc/zrepl/docs/
