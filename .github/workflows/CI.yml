@@ -12,8 +12,8 @@ jobs:
     name: build debian package from released binaries
     runs-on: ubuntu-latest
     steps:
-    - run: 'echo ${{ github.event_name }} event triggered this step.'
-    
+    - run: "echo ${{ github.event_name }} event triggered this step."
+
     - uses: actions/checkout@v1
 
     # default variables from committed file
@@ -32,9 +32,21 @@ jobs:
     - run: echo '::set-env name=ZREPL_GO_VERSION::${{github.event.client_payload.go_version }}'
       if: github.event_name == 'repository_dispatch'
 
-    - name: Download the release
+    - name: Checkout zrepl main repo
+      uses: actions/checkout@v2
+      with:
+        repository: zrepl/zrepl
+        path: zrepl-main-repo
+        ref: ${{env.ZREPL_MAIN_REPO_COMMMIT}}
+        fetch-depth: 0
+    - name: Get git-describe of zrepl main repo
+      run: echo '::set-env name=ZREPL_MAIN_REPO_GIT_DESCRIBE::'"$(set -eux && cd zrepl-main-repo && git describe)"
+    - name: Bump changelog to git-describe version
+      run: bash -x ./bump_changelog.bash "${ZREPL_MAIN_REPO_GIT_DESCRIBE#v}"
+
+    - name: Download the release artifacts
       run: bash -x ./download_ci_release.bash "$ZREPL_MAIN_REPO_COMMIT" "$ZREPL_GO_VERSION"
-      
+
     - name: Build the package
       run: bash -x ./docker_make_debs.bash
 

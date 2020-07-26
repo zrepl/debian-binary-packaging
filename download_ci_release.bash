@@ -12,5 +12,5 @@ rm -rf release
 aws="aws --endpoint-url https://minio.cschwarz.com --no-sign-request"
 
 
-path="s3://zrepl-ci-artifacts/$commit/build-$goversion/"
-$aws s3 sync "$path" ./release
+path="s3://zrepl-ci-artifacts/$commit/build-$goversion/release"
+$aws s3 sync --delete "$path" ./release
