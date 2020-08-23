@@ -10,6 +10,7 @@ source env.bash
 REPONAME=unstable
 FLAGS="-architectures=amd64,arm64,armhf,i386 -gpg-key E101418FD3D6FBCB9D65A62D708699FC5F2EBF16"
 DISTS=()
+DISTS+=("-distribution=focal   $REPONAME :ubuntu")
 DISTS+=("-distribution=eoan    $REPONAME :ubuntu")
 DISTS+=("-distribution=disco   $REPONAME :ubuntu")
 DISTS+=("-distribution=bionic  $REPONAME :ubuntu")
