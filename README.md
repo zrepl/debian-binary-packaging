@@ -1,4 +1,3 @@
----
 
 > [!WARNING]
 > This repo is archived. The tooling to run the apt and rpm repo is in a different repo that is not open source.
